@@ -1,0 +1,30 @@
+colorMode pastel
+styleMode shadow
+typeface clean
+title Production Game AI Architecture 2026 - Complete Flow
+direction down
+
+Phase1[label: "Phase 1 Infrastructure", color: "gray"]
+Phase2[label: "Phase 2 Data Ops", color: "purple"]
+Phase3[label: "Phase 3 RAG Engine", color: "green"]
+Phase4[label: "Phase 4 Agent Swarm", color: "red"]
+Phase5[label: "Phase 5 Runtime", color: "blue"]
+
+Phase1>Phase2: TriggerAndCompute
+Phase2>Phase3: ModelMetadata
+Phase3>Phase4: QualifiedContext
+Phase4>Phase5: Deploy
+
+Phase5>Phase2: FailureFeedback[color: red]
+Phase5>Phase1: MetricsFeedback[color: gray]
+Phase4>Phase1: TokenTracing[color: gray]
+
+legend
+{
+  [connection: >, label: main flow]
+  [shape: rectangle, color: gray, label: infrastructure]
+  [shape: rectangle, color: purple, label: data and training]
+  [shape: rectangle, color: green, label: retrieval memory]
+  [shape: rectangle, color: red, label: agent logic]
+  [shape: rectangle, color: blue, label: runtime execution]
+}

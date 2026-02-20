@@ -1,0 +1,40 @@
+colorMode pastel
+styleMode shadow
+typeface clean
+title Layer 1 Infrastructure and Orchestration
+direction down
+
+Infrastructure[label: "Infrastructure & Orchestration", color: "gray"]
+{
+  AuthService[label: "Auth and RBAC"]
+  Orchestrator[label: "Orchestrator", color: "red"]
+  {
+    JobQueue[label: "Redis or ARQ Queue"]
+    Workers[label: "Worker Pool GPU Nodes"]
+    Scheduler[label: "Cron Scheduler"]
+  }
+  Observability[label: "Observability"]
+  {
+    Prometheus[label: "Prometheus Metrics"]
+    Grafana[label: "Grafana Dashboards"]
+    Tracing[label: "OpenTelemetry Traces"]
+  }
+}
+
+AuthService>JobQueue: Authorize
+Scheduler>JobQueue: Schedule
+JobQueue>Workers: Dispatch
+Workers>Prometheus: EmitMetrics
+Prometheus>Grafana: Visualize
+Workers>Tracing: EmitSpans
+
+Output[label: "Output To Other Layers", shape: oval, color: "green"]
+JobQueue>Output: TriggerDataOps
+Workers>Output: AllocateCompute
+
+legend
+{
+  [connection: >, label: request flow]
+  [shape: rectangle, color: blue, label: queue store]
+  [shape: rectangle, color: gray, label: service]
+}

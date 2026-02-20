@@ -1,0 +1,35 @@
+colorMode pastel
+styleMode shadow
+typeface clean
+title Layer 5 Runtime and Feedback
+direction down
+
+ExecutionEnv[label: "Runtime and Feedback", color: "blue"]
+{
+  BotRunner[label: "Headless Runner Playwright Mobile"]
+  StateObserver[label: "State Detection YOLO and OCR"]
+  Recorder[label: "Session Recorder FFmpeg"]
+  FailureAnalyzer[label: "Crash Analysis", color: "red"]
+}
+
+AnalyticsDB[label: "Analytics DB ClickHouse Postgres", color: "purple"]
+
+BotRunner>StateObserver: SendFrames
+StateObserver>Recorder: AnnotatedFrames
+BotRunner>FailureAnalyzer: OnCrash[color: red]
+BotRunner>AnalyticsDB: LogMetrics
+
+Input[label: "From Agent Swarm", shape: oval, color: "red"]
+FeedbackOutput[label: "To Data Ops", shape: oval, color: "purple"]
+ObservabilityOutput[label: "To Observability", shape: oval, color: "gray"]
+
+Input>BotRunner: Deploy
+FailureAnalyzer>FeedbackOutput: NewFailureCase
+AnalyticsDB>ObservabilityOutput: Visualize
+
+legend
+{
+  [connection: >, label: request flow]
+  [shape: rectangle, color: purple, label: analytics store]
+  [shape: rectangle, color: red, label: failure path]
+}

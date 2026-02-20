@@ -1,0 +1,124 @@
+title Production Game AI Architecture 2026 - End-to-End
+direction right
+
+// LAYER 1
+Infrastructure [label: "Infrastructure & Orchestration", color: "#e0e0e0"] {
+  AuthService [label: "Auth & RBAC\n(JWT / OAuth)"]
+
+  Orchestrator [label: "Orchestrator", color: "#ffcccc"] {
+    JobQueue [label: "Redis / ARQ\n(Distributed Queue)", shape: cylinder]
+    Workers [label: "Worker Pool\n(GPU Nodes)"]
+    Scheduler [label: "Cron / Celery Beat"]
+  }
+
+  Observability [label: "Observability", color: "#d0d0d0"] {
+    Prometheus [label: "Metrics\n(Prometheus)"]
+    Grafana [label: "Dashboards\n(Grafana)"]
+    Tracing [label: "Trace Logs\n(OpenTelemetry)"]
+  }
+}
+
+// LAYER 2
+DataOpsPipeline [label: "Data Ops Pipeline", color: "#e8e0f0"] {
+  RawIngest [label: "Raw Ingest"]
+  PrivacyFilter [label: "PII Anonymization\n(Blur Faces/Names)"]
+
+  DataVersionControl [label: "DVC / S3\n(Dataset Versioning)", shape: package, color: "#cce0ff"]
+
+  LabelingLoop [label: "Labeling Loop"] {
+    AutoLabeler [label: "Auto-Label Agents"]
+    HumanVerify [label: "Human Verification"]
+  }
+
+  TrainingCluster [label: "Training Cluster"] {
+    Augmentation [label: "Augmentation"]
+    YOLOTrainer [label: "YOLOv12 Training"]
+    ModelRegistry [label: "MLflow / Registry\n(Versioned Weights)", shape: cylinder]
+  }
+}
+
+// LAYER 3
+RAGEngine [label: "RAG Knowledge Base", color: "#d0f0e8"] {
+  Sources [label: "Sources"] {
+    Manuals [label: "Manuals"]
+    Logs [label: "Logs"]
+    WebSearch [label: "Live Web Search\n(Tavily/Serper)"]
+  }
+
+  Processing [label: "Processing"] {
+    Chunker [label: "Hierarchical Chunking\n(Parent/Child)"]
+    Embedder [label: "Embedding Model\n(Pinned Version)"]
+  }
+
+  VectorStore [label: "ChromaDB Sharded\n(with TTL)", shape: cylinder, color: "#b3e6cc"]
+
+  RetrievalLogic [label: "Retrieval Logic"] {
+    HybridSearch [label: "Hybrid\n(Vector + Keyword)"]
+    Reranker [label: "Cross-Encoder\n(Re-ranking)"]
+    RAGEval [label: "RAGAS Eval\n(Faithfulness Check)", color: "#ffe0b3"]
+  }
+}
+
+// LAYER 4
+AgentSwarm [label: "Agentic Factory", color: "#ffd6d6"] {
+  ContextManager [label: "Context Window\n(Token Budgeting)"]
+  PlannerAgent [label: "Planner Agent\n(Decomposes Task)"]
+  CoderAgent [label: "Coder Agent\n(Jinja2 Templates)"]
+  ReviewerAgent [label: "Security Reviewer\n(Static Analysis)"]
+
+  Sandbox [label: "Secure Sandbox\n(Docker/gVisor)", shape: parallelogram, color: "#ffb3b3"]
+
+  DecisionGate [label: "Tests Pass?", shape: diamond]
+  HumanGate [label: "HITL Approval?", shape: diamond, color: "#fff9c4"]
+}
+
+// LAYER 5
+ExecutionEnvironment [label: "Runtime & Feedback", color: "#ccd9ff"] {
+  BotRunner [label: "Headless Runner\n(Playwright/Mobile)"]
+  StateObserver [label: "State Detection\n(YOLO + OCR)"]
+  Recorder [label: "Session Recorder\n(FFmpeg)"]
+  FailureAnalyzer [label: "Crash Analysis", color: "#ffb3b3"]
+}
+
+AnalyticsDB [label: "Analytics DB\n(ClickHouse/Postgres)", shape: cylinder, color: "#e6ccff"]
+
+// CONNECTIONS
+// Use > instead of -> 
+AuthService > JobQueue: "Validates Request"
+JobQueue > RawIngest: "Triggers Ingest"
+Workers > AgentSwarm: "Allocates Compute"
+
+RawIngest > PrivacyFilter
+PrivacyFilter > DataVersionControl
+DataVersionControl > LabelingLoop
+LabelingLoop > Augmentation
+Augmentation > YOLOTrainer
+YOLOTrainer > ModelRegistry: "Push best.pt"
+
+ModelRegistry > Sources: "Model Metadata"
+Sources > Chunker
+Chunker > Embedder
+Embedder > VectorStore
+VectorStore > HybridSearch
+HybridSearch > Reranker
+Reranker > RAGEval: "Quality Check"
+
+RAGEval > ContextManager: "Qualified Context"
+ContextManager > PlannerAgent
+PlannerAgent > CoderAgent
+CoderAgent > ReviewerAgent
+ReviewerAgent > Sandbox: "Dry Run Code"
+Sandbox > DecisionGate
+DecisionGate > CoderAgent: "Fix Bugs (Loop)"
+DecisionGate > HumanGate: "Success"
+
+HumanGate > BotRunner: "Deploy"
+BotRunner > StateObserver
+StateObserver > Recorder
+BotRunner > FailureAnalyzer: "On Crash"
+FailureAnalyzer > DataVersionControl: "New Failure Case"
+BotRunner > AnalyticsDB: "Log Score/Metrics"
+AnalyticsDB > Grafana: "Visualize"
+
+Workers > Prometheus: "Resource Usage"
+ContextManager > Tracing: "Token Usage"

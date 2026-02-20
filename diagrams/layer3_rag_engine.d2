@@ -1,0 +1,48 @@
+colorMode pastel
+styleMode shadow
+typeface clean
+title Layer 3 RAG Knowledge Base
+direction down
+
+RAGEngine[label: "RAG Knowledge Base", color: "green"]
+{
+  Sources[label: "Sources"]
+  {
+    Manuals[label: "Manuals"]
+    Logs[label: "Logs"]
+    WebSearch[label: "Live Web Search"]
+  }
+  Processing[label: "Processing"]
+  {
+    Chunker[label: "Hierarchical Chunking"]
+    Embedder[label: "Embedding Model"]
+  }
+  VectorStore[label: "ChromaDB Sharded with TTL"]
+  Retrieval[label: "Retrieval Logic"]
+  {
+    HybridSearch[label: "Hybrid Search"]
+    Reranker[label: "Cross Encoder Reranker"]
+    RAGEval[label: "RAGAS Evaluation", color: "yellow"]
+  }
+}
+
+Manuals>Chunker
+Logs>Chunker
+WebSearch>Chunker
+Chunker>Embedder: Chunks
+Embedder>VectorStore: Vectors
+VectorStore>HybridSearch: Retrieve
+HybridSearch>Reranker: Reorder
+Reranker>RAGEval: QualityCheck
+
+Input[label: "From Data Ops", shape: oval, color: "purple"]
+Output[label: "To Agent Swarm", shape: oval, color: "red"]
+Input>Sources: Metadata
+RAGEval>Output: QualifiedContext
+
+legend
+{
+  [connection: >, label: request flow]
+  [shape: rectangle, color: green, label: vector storage]
+  [shape: rectangle, color: yellow, label: quality gate]
+}

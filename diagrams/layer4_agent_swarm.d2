@@ -1,0 +1,39 @@
+colorMode pastel
+styleMode shadow
+typeface clean
+title Layer 4 Agentic Factory
+direction down
+
+AgentSwarm[label: "Agentic Factory", color: "red"]
+{
+  ContextManager[label: "Context Window Budgeting"]
+  PlannerAgent[label: "Planner Agent"]
+  CoderAgent[label: "Coder Agent"]
+  ReviewerAgent[label: "Security Reviewer"]
+  Sandbox[label: "Secure Sandbox"]
+  DecisionGate[label: "Tests Pass?", color: "yellow"]
+  HumanGate[label: "HITL Approval?", color: "yellow"]
+}
+
+ContextManager>PlannerAgent: ProvideContext
+PlannerAgent>CoderAgent: BuildPlan
+CoderAgent>ReviewerAgent: SubmitCode
+ReviewerAgent>Sandbox: DryRun
+Sandbox>DecisionGate: TestResult
+DecisionGate>CoderAgent: FixLoop[color: red]
+DecisionGate>HumanGate: Success[color: green]
+
+Input[label: "From RAG Engine", shape: oval, color: "green"]
+Output[label: "To Runtime", shape: oval, color: "blue"]
+Observability[label: "To Observability", shape: oval, color: "gray"]
+
+Input>ContextManager: QualifiedContext
+HumanGate>Output: Deploy
+ContextManager>Observability: TokenUsage
+
+legend
+{
+  [connection: >, label: request flow]
+  [shape: rectangle, color: yellow, label: decision]
+  [shape: rectangle, color: red, label: sandbox]
+}
