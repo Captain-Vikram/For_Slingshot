@@ -1,0 +1,23 @@
+{
+  "project": "FruitNinja-YT",
+  "video_url": "https://www.youtube.com/watch?v=sXfdfLHp9Ko",
+  "classes": [
+    "fruits",
+    "bomb",
+    "blade trails"
+  ],
+  "target_accuracy": 0.75,
+  "max_iterations": 10,
+  "num_agents": 4,
+  "fps": 1,
+  "output_dir": "output",
+  "label_mode": "gemini",
+  "model": "gemini-2.5-flash",
+  "openai_model": "gpt-5-nano",
+  "gemini_model": "gemini-2.5-flash",
+  "yolo_model": "yolov8n.pt",
+  "epochs": 50,
+  "train_split": 0.8,
+  "local_model_name": "zai-org/glm-4.6v-flash",
+  "local_vlm_url": "http://localhost:1234/v1"
+}

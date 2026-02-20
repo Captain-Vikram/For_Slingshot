@@ -1,0 +1,217 @@
+<h1 align="center">yolodex</h1>
+
+<div align="center">
+
+![GitHub last commit](https://img.shields.io/github/last-commit/qtzx06/yolodex?style=for-the-badge&labelColor=ffffff&color=8ecaff)
+![GitHub Repo stars](https://img.shields.io/github/stars/qtzx06/yolodex?style=for-the-badge&labelColor=ffffff&color=8ecaff)
+![GitHub repo size](https://img.shields.io/github/repo-size/qtzx06/yolodex?style=for-the-badge&labelColor=ffffff&color=8ecaff)
+![License: MIT](https://img.shields.io/badge/license-MIT-8ecaff?style=for-the-badge&labelColor=ffffff)
+![PRs welcome](https://img.shields.io/badge/PRs-welcome-8ecaff?style=for-the-badge&labelColor=ffffff)
+
+</div>
+
+<div align="center">
+
+Autonomous YOLO dataset + training agent skills for any unlabeled data. The system helps determine how to properly label and splice your data.
+
+</div>
+
+[![star history chart](https://api.star-history.com/svg?repos=qtzx06/yolodex&type=Date)](https://star-history.com/#qtzx06/yolodex&Date)
+
+## architecture
+
+```mermaid
+flowchart TB
+  subgraph API["API Server (FastAPI)"]
+    JM["Job Manager (In-Memory + Disk Persist)"]
+    SSE["Event Stream (SSE)"]
+  end
+
+  subgraph Pipeline["Data Pipeline"]
+    A["Data Source"] --> B["Collect"]
+    B --> C["Label (AI Agents)"]
+    C --> D["Augment"]
+    D --> E["Train (YOLO)"]
+    E --> F["Eval"]
+  end
+
+  Client["Web / CLI"] <--> API
+  JM --> Pipeline
+  Pipeline -- "Logs/Status" --> JM
+  JM -- "Real-time Events" --> SSE
+```
+
+## components
+
+- skills runtime: Agent Skills System
+- pipeline skills: `collect`, `label`, `augment`, `train`, `eval`, `yolodex`
+- orchestration loop: `yolodex.sh` + `AGENTS.md`
+- shared helpers: `shared/utils.py`
+
+## installation
+
+```bash
+git clone https://github.com/qtzx06/yolodex && cd yolodex
+bash setup.sh
+```
+
+requirements:
+
+- macos, linux, or windows
+- python 3.11+
+- Agent CLI tool
+
+## workflow (main path)
+
+1. start the system in repo root
+2. use the `yolodex` tool to gather config
+3. run labeling with subagents when needed
+4. iterate until eval target is met
+
+example:
+
+```text
+$ yolodex
+> use the yolodex skill to train a detector from this video: https://youtube.com/...
+> classes: player, weapon, vehicle
+```
+
+The system determines how many subagents to spawn for labeling based on the dataset size:
+
+```bash
+bash .agents/skills/label/scripts/dispatch.sh <n>
+```
+
+## run modes
+
+autonomous loop:
+
+```bash
+bash yolodex.sh
+```
+
+manual skills:
+
+```bash
+uv run .agents/skills/collect/scripts/run.py
+bash .agents/skills/label/scripts/dispatch.sh 4
+uv run .agents/skills/augment/scripts/run.py
+uv run .agents/skills/train/scripts/run.py
+uv run .agents/skills/eval/scripts/run.py
+```
+
+api mode (fastapi backend):
+
+```bash
+uv sync
+uv run uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+api docs: `http://localhost:8000/docs`
+
+## config
+
+minimal `config.json`:
+
+```json
+{
+  "project": "my-project",
+  "video_url": "https://youtube.com/watch?v=YOUR_VIDEO",
+  "classes": ["player", "weapon", "vehicle"],
+  "label_mode": "gemini",
+  "model": "gemini-2.5-flash",
+  "openai_model": "model-b-vision",
+  "target_accuracy": 0.75,
+  "num_agents": 4,
+  "fps": 1,
+  "yolo_model": "yolov8n.pt",
+  "epochs": 50,
+  "train_split": 0.8,
+  "seed": 42
+}
+```
+
+key fields:
+
+| field             | default              | description                                            |
+| ----------------- | -------------------- | ------------------------------------------------------ |
+| `project`         | `""`                 | output namespace under `runs/<project>/`               |
+| `video_url`       | `""`                 | youtube url or local video path                        |
+| `classes`         | `[]`                 | target classes                                         |
+| `label_mode`      | `"gemini"`           | label strategy: `gemini`, `gpt`, `subagent`, `cua+sam` |
+| `model`           | `"gemini-2.5-flash"` | active model for current `label_mode`                  |
+| `openai_model`    | `"gpt-5-nano"`       | optional secondary model provider                      |
+| `target_accuracy` | `0.75`               | mAP@50 stop threshold                                  |
+| `num_agents`      | `4`                  | parallel label workers                                 |
+| `fps`             | `1`                  | extraction fps                                         |
+| `yolo_model`      | `"yolov8n.pt"`       | base yolo checkpoint                                   |
+| `epochs`          | `50`                 | train epochs                                           |
+| `train_split`     | `0.8`                | train/val split                                        |
+| `seed`            | `42`                 | deterministic split seed                               |
+
+quick provider switches:
+
+```json
+{ "label_mode": "gemini", "model": "gemini-2.5-flash" }
+{ "label_mode": "gpt", "model": "gpt-5-nano" }
+{ "label_mode": "subagent" }
+```
+
+## outputs
+
+- eval: `runs/<project>/eval_results.json`
+- frames: `runs/<project>/frames/`
+- label previews: `runs/<project>/frames/preview/`
+- trained weights: `runs/<project>/weights/best.pt`
+
+## repo layout
+
+```text
+yolodex/
+├── .agents/skills/
+│   ├── yolodex/
+│   ├── collect/
+│   ├── label/
+│   ├── augment/
+│   ├── train/
+│   └── eval/
+├── shared/utils.py
+├── pipeline/main.py
+├── docs/
+├── yolodex.sh
+├── setup.sh
+├── AGENTS.md
+├── config.json
+├── progress.txt
+└── pyproject.toml
+```
+
+## docs
+
+- [docs/usage.md](docs/usage.md)
+- [docs/models.md](docs/models.md)
+- [docs/skills.md](docs/skills.md)
+- [docs/architecture.md](docs/architecture.md)
+- [docs/api_fastapi.md](docs/api_fastapi.md)
+- [docs/api_interactions.md](docs/api_interactions.md)
+- [docs/changelog.md](docs/changelog.md)
+
+## contributing
+
+contributions are welcome.
+
+standard flow:
+
+1. fork the repo and create a branch from `main`
+2. keep changes scoped and explain the why in your pr
+3. run relevant checks before opening the pr
+4. open a pull request with:
+   - clear summary
+   - test/validation notes
+   - screenshots/log snippets when relevant
+
+if you’re planning a bigger change, open an issue first so we can align on direction.
+
+## license
+
+MIT
