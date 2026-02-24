@@ -1,24 +1,20 @@
 colorMode pastel
 styleMode shadow
 typeface clean
-title Layer 4 Agentic Factory
+title Layer 4 Agent Swarm
 direction down
 
-AgentSwarm[label: "Agentic Factory", color: "red"]
+AgentSwarm[label: "Agent Swarm", color: "red"]
 {
-  ContextManager[label: "Context Window Budgeting"]
-  PlannerAgent[label: "Planner Agent"]
-  CoderAgent[label: "Coder Agent"]
-  ReviewerAgent[label: "Security Reviewer"]
+  ContextManager[label: "Context Window\n(Token Budgeting)"]
+  CoderAgent[label: "Coder Agent\n(Jinja2 templates; script gen)"]
   Sandbox[label: "Secure Sandbox"]
   DecisionGate[label: "Tests Pass?", color: "yellow"]
   HumanGate[label: "HITL Approval?", color: "yellow"]
 }
 
-ContextManager>PlannerAgent: ProvideContext
-PlannerAgent>CoderAgent: BuildPlan
-CoderAgent>ReviewerAgent: SubmitCode
-ReviewerAgent>Sandbox: DryRun
+ContextManager>CoderAgent: ProvideContext
+CoderAgent>Sandbox: SubmitCode
 Sandbox>DecisionGate: TestResult
 DecisionGate>CoderAgent: FixLoop[color: red]
 DecisionGate>HumanGate: Success[color: green]

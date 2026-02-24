@@ -365,7 +365,7 @@ export default function App() {
 
   return (
     <div className="app">
-      <h1>Yolodex Frontend</h1>
+      <h1>Testing Frontend</h1>
       <p className="subtitle">
         GUI for API input + process notifications (start, progress logs, done).
       </p>

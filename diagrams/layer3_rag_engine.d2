@@ -11,18 +11,18 @@ RAGEngine[label: "RAG Knowledge Base", color: "green"]
     Manuals[label: "Manuals"]
     Logs[label: "Logs"]
     WebSearch[label: "Live Web Search"]
+    InternetScrape[label: "Internet Scrape\n(Web examples)"]
   }
   Processing[label: "Processing"]
   {
-    Chunker[label: "Hierarchical Chunking"]
+    Chunker[label: "Chunker\n(Basic chunking)"]
     Embedder[label: "Embedding Model"]
   }
-  VectorStore[label: "ChromaDB Sharded with TTL"]
+  VectorStore[label: "ChromaDB\n(local)"]
   Retrieval[label: "Retrieval Logic"]
   {
     HybridSearch[label: "Hybrid Search"]
     Reranker[label: "Cross Encoder Reranker"]
-    RAGEval[label: "RAGAS Evaluation", color: "yellow"]
   }
 }
 
@@ -33,12 +33,12 @@ Chunker>Embedder: Chunks
 Embedder>VectorStore: Vectors
 VectorStore>HybridSearch: Retrieve
 HybridSearch>Reranker: Reorder
-Reranker>RAGEval: QualityCheck
+Reranker>Output: QualifiedContext
 
 Input[label: "From Data Ops", shape: oval, color: "purple"]
 Output[label: "To Agent Swarm", shape: oval, color: "red"]
 Input>Sources: Metadata
-RAGEval>Output: QualifiedContext
+Reranker>Output: QualifiedContext
 
 legend
 {

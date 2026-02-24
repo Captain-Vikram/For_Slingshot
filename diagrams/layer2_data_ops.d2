@@ -7,23 +7,21 @@ direction down
 DataOps[label: "Data Ops Pipeline", color: "purple"]
 {
   RawIngest[label: "Raw Ingest"]
-  PrivacyFilter[label: "PII Anonymization"]
-  DataVersionControl[label: "DVC and S3", color: "blue"]
+  DataVersionControl[label: "Data Versioning\n(S3 / local)", color: "blue"]
   LabelingLoop[label: "Labeling Loop"]
   {
-    AutoLabeler[label: "Auto Label Agents"]
+    AutoLabeler[label: "AutoLabeler\n(VLM-powered; direct video ingest)"]
     HumanVerify[label: "Human Verification"]
   }
   TrainingCluster[label: "Training Cluster", color: "green"]
   {
     Augmentation[label: "Augmentation"]
     YOLOTrainer[label: "YOLOv12 Trainer"]
-    ModelRegistry[label: "MLflow Registry"]
+    ModelRegistry[label: "Model Registry\n(File system: ./models)"]
   }
 }
 
-RawIngest>PrivacyFilter: CleanInput
-PrivacyFilter>DataVersionControl: SaveVersion
+RawIngest>DataVersionControl: DirectIngest
 DataVersionControl>AutoLabeler: BuildLabels
 AutoLabeler>HumanVerify: Verify
 HumanVerify>Augmentation: ReadyDataset

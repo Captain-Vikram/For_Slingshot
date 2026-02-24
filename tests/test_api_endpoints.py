@@ -11,11 +11,11 @@ import sys
 
 # Ensure repo root is on sys.path so sibling packages like `shared` can be imported
 repo_root = Path(__file__).resolve().parents[1]
-# Add repo root and the `yolodex` package dir so `shared` (yolodex/shared) is importable as top-level
+# Add repo root and the `phase1_2` package dir so `shared` (phase1_2/shared) is importable as top-level
 sys.path.insert(0, str(repo_root))
-sys.path.insert(0, str(repo_root / "yolodex"))
+sys.path.insert(0, str(repo_root / "phase1_2"))
 
-import yolodex.api.main as api_main
+import phase1_2.api.main as api_main
 
 
 class DummyThread:
