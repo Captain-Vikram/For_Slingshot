@@ -44,8 +44,8 @@ flowchart TB
 ## components
 
 - skills runtime: Agent Skills System
--- pipeline skills: `collect`, `label`, `augment`, `train`, `eval`, `phase1_2`
--- orchestration loop: `phase1_2.sh` + `AGENTS.md`
+  -- pipeline skills: `collect`, `label`, `augment`, `train`, `eval`, `phase1_2`
+  -- orchestration loop: `phase1_2.sh` + `AGENTS.md`
 - shared helpers: `shared/utils.py`
 
 ## installation

@@ -11,6 +11,7 @@ each skill lives in `.agents/skills/<name>/` with a `SKILL.md` (metadata for cod
 **invocation**: user-invocable in codex — just ask "train a YOLO model" and it kicks in.
 
 **what it does**:
+
 1. asks for youtube url (required)
 2. asks for target classes (required)
 3. asks for accuracy threshold (optional, default 0.75)
@@ -31,6 +32,7 @@ each skill lives in `.agents/skills/<name>/` with a `SKILL.md` (metadata for cod
 **reads from config**: `video_url`, `fps`, `output_dir`
 
 **outputs**:
+
 - `output/video.mp4`
 - `output/frames/frame_000001.jpg`, `frame_000002.jpg`, ...
 
@@ -57,29 +59,33 @@ labels all unlabeled frames sequentially. good for small batches or when codex i
 splits frames into batches, creates git worktrees, dispatches concurrent codex subagents. ~Nx faster.
 if a user says `call subagent`, map it to this command.
 supports:
+
 - `label_mode=gpt` with `OPENAI_API_KEY` (runs `run_batch.py`)
 - `label_mode=codex` without API keys (Codex subagents inspect images directly)
 
 ### scripts
 
-| script | purpose |
-|--------|---------|
-| `run.py` | single-agent labeling (all frames) |
-| `run_batch.py` | subagent labeling (only frames in its worktree) |
-| `dispatch.sh` | orchestrator — splits, dispatches, merges |
-| `merge_classes.py` | unifies class maps from all subagents |
+| script             | purpose                                         |
+| ------------------ | ----------------------------------------------- |
+| `run.py`           | single-agent labeling (all frames)              |
+| `run_batch.py`     | subagent labeling (only frames in its worktree) |
+| `dispatch.sh`      | orchestrator — splits, dispatches, merges       |
+| `merge_classes.py` | unifies class maps from all subagents           |
 
 **reads from config**: `classes`, `model`, `output_dir`, `num_agents`
 `dispatch.sh` also resolves `project -> runs/<project>/` so subagents write to the active run directory.
 
 **outputs**:
+
 - `output/frames/*.txt` (YOLO format labels)
 - `output/classes.txt` (class name -> id mapping)
 
 **label format** (YOLO normalized):
+
 ```
 <class_id> <center_x> <center_y> <width> <height>
 ```
+
 all values normalized to [0, 1] relative to image dimensions.
 
 **dependencies**: openai (API), ffprobe (image dimensions)
@@ -96,12 +102,12 @@ all values normalized to [0, 1] relative to image dimensions.
 
 **transforms applied** (per frame, 4 variants):
 
-| transform | image effect | label effect |
-|-----------|-------------|-------------|
-| horizontal flip | mirror left-right | `new_cx = 1.0 - cx` |
-| brightness jitter | random factor 0.7-1.3 | unchanged |
-| contrast jitter | random factor 0.7-1.3 | unchanged |
-| gaussian noise | intensity=15 | unchanged |
+| transform         | image effect          | label effect        |
+| ----------------- | --------------------- | ------------------- |
+| horizontal flip   | mirror left-right     | `new_cx = 1.0 - cx` |
+| brightness jitter | random factor 0.7-1.3 | unchanged           |
+| contrast jitter   | random factor 0.7-1.3 | unchanged           |
+| gaussian noise    | intensity=15          | unchanged           |
 
 **outputs**: `output/augmented/` with `*_flip.jpg`, `*_bright.jpg`, `*_contrast.jpg`, `*_noise.jpg` and matching `.txt` labels.
 
@@ -120,6 +126,7 @@ result: ~5x training data (original + 4 augmented per frame).
 **run**: `uv run .agents/skills/train/scripts/run.py`
 
 **what it does**:
+
 1. collects all image/label pairs from `output/frames/` and `output/augmented/`
 2. splits into train/val per `train_split` ratio
 3. copies to `output/dataset/images/{train,val}/` and `output/dataset/labels/{train,val}/`
@@ -130,6 +137,7 @@ result: ~5x training data (original + 4 augmented per frame).
 **reads from config**: `yolo_model`, `epochs`, `train_split`, `output_dir`
 
 **outputs**:
+
 - `output/dataset/` (organized train/val split)
 - `output/dataset.yaml`
 - `output/weights/best.pt`
@@ -147,6 +155,7 @@ result: ~5x training data (original + 4 augmented per frame).
 **run**: `uv run .agents/skills/eval/scripts/run.py`
 
 **what it does**:
+
 1. loads `output/weights/best.pt`
 2. runs `model.val(data=output/dataset.yaml)`
 3. extracts mAP@50, mAP@50-95, precision, recall

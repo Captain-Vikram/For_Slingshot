@@ -26,6 +26,7 @@ If config.json is already populated, just run: `bash phase1_2.sh`
 ## Architecture
 
 -- Skills: phase1_2 (intake), collect, label (parallel), augment, train, eval
+
 - Shared code: shared/utils.py
 - Config: config.json | Memory: progress.txt
 

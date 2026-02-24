@@ -6,17 +6,17 @@ replaced the monolithic pipeline with a codex skill architecture and parallel la
 
 ### what changed from the original
 
-| before | after |
-|--------|-------|
-| single `pipeline/main.py` monolith | 5 independent codex skills in `.agents/skills/` |
-| no training or eval | full ultralytics yolo training + mAP evaluation |
-| no augmentation | synthetic augmentation (flip, brightness, contrast, noise) |
-| sequential labeling only | parallel labeling via codex subagents in git worktrees |
-| no iteration loop | ralph-style autonomous loop (`phase1_2.sh`) |
-| no shared code | `shared/utils.py` with extracted common utilities |
-| basic AGENTS.md | AGENTS.md with full iteration logic for codex |
-| no landing page | landing page with pipeline viz + live eval stats |
-| `requirements.txt` only | `pyproject.toml` with uv support |
+| before                             | after                                                      |
+| ---------------------------------- | ---------------------------------------------------------- |
+| single `pipeline/main.py` monolith | 5 independent codex skills in `.agents/skills/`            |
+| no training or eval                | full ultralytics yolo training + mAP evaluation            |
+| no augmentation                    | synthetic augmentation (flip, brightness, contrast, noise) |
+| sequential labeling only           | parallel labeling via codex subagents in git worktrees     |
+| no iteration loop                  | ralph-style autonomous loop (`phase1_2.sh`)                |
+| no shared code                     | `shared/utils.py` with extracted common utilities          |
+| basic AGENTS.md                    | AGENTS.md with full iteration logic for codex              |
+| no landing page                    | landing page with pipeline viz + live eval stats           |
+| `requirements.txt` only            | `pyproject.toml` with uv support                           |
 
 ### files created
 
