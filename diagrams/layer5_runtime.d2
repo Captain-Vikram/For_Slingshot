@@ -6,13 +6,13 @@ direction down
 
 ExecutionEnv[label: "Runtime and Feedback", color: "blue"]
 {
-  BotRunner[label: "Headless Runner Playwright Mobile"]
-  StateObserver[label: "State Detection YOLO and OCR"]
-  Recorder[label: "Session Recorder FFmpeg"]
+  BotRunner[label: "Bot Runner\n(PyQt5 GUI)"]
+  StateObserver[label: "State Detection\n(YOLO + OCR)"]
+  Recorder[label: "Session Recorder\n(FFmpeg)"]
   FailureAnalyzer[label: "Crash Analysis", color: "red"]
 }
 
-AnalyticsDB[label: "Analytics DB ClickHouse Postgres", color: "purple"]
+AnalyticsDB[label: "Analytics DB\n(ClickHouse/Postgres)", color: "purple"]
 
 BotRunner>StateObserver: SendFrames
 StateObserver>Recorder: AnnotatedFrames
