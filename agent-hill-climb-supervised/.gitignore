@@ -1,0 +1,14 @@
+data/
+hcr_data/
+hcr_data_masked/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+.DS_Store
+Thumbs.db
+.ipynb_checkpoints/
+.vscode/
+.idea/
